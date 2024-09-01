@@ -1,0 +1,4 @@
+---
+btrbk_config_file: basic_btrbk.conf.j2
+btrbk_snapshot_dir: snapshots
+btrbk_timer_schedule: hourly

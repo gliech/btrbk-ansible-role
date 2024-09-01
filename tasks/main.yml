@@ -1,0 +1,48 @@
+---
+- name: Install os packages
+  ansible.builtin.package:
+    name:
+      - btrbk
+      - mbuffer
+    state: present
+  become: yes
+
+- name: Create config file
+  ansible.builtin.template:
+    src: "{{ btrbk_config_file }}"
+    dest: /etc/btrbk/btrbk.conf
+    mode: 0644
+  become: yes
+
+- name: Create snapshot dir
+  ansible.builtin.file:
+    path: "{{ btrbk_volume }}/{{ btrbk_snapshot_dir }}"
+    state: directory
+    mode: 0755
+  become: yes
+  when: btrbk_volume is defined and btrbk_volume and btrbk_snapshot_dir
+
+- name: Create directory for systemd timer override
+  ansible.builtin.file:
+    dest: /etc/systemd/system/btrbk.timer.d
+    state: directory
+    mode: 0755
+  become: yes
+  when: btrbk_timer_schedule
+
+- name: Create override config for systemd timer
+  ansible.builtin.template:
+    src: btrbk_timer_override.conf.j2
+    dest: /etc/systemd/system/btrbk.timer.d/override.conf
+    mode: 0644
+  become: yes
+  when: btrbk_timer_schedule
+  notify: restart_btrbk_timer
+
+- name: Enable systemd timer
+  ansible.builtin.service:
+    name: btrbk.timer
+    enabled: yes
+  become: yes
+  when: btrbk_timer_schedule
+  notify: restart_btrbk_timer

@@ -1,0 +1,10 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: Initialize package cache
+      ansible.builtin.package:
+        update_cache: yes
+        upgrade: yes
+      become: yes
+      when: ansible_pkg_mgr in ['apt', 'pacman']

@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Import btrbk"
+      ansible.builtin.import_role:
+        name: "gliech.btrbk"
+      vars:
+        btrbk_volume: /test
+        btrbk_subvolumes:
+          - first
+          - second

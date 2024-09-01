@@ -1,0 +1,7 @@
+---
+- name: Restart systemd timer
+  ansible.builtin.service:
+    name: btrbk.timer
+    state: restarted
+  listen: restart_btrbk_timer
+  become: yes
